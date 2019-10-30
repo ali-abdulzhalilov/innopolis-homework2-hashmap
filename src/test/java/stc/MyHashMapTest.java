@@ -19,7 +19,7 @@ public class MyHashMapTest {
     //values?
     //keySet?
 
-    MyHashMap map;
+    private MyHashMap map;
 
     @Before
     public void setUp() throws Exception {
@@ -29,6 +29,29 @@ public class MyHashMapTest {
     @Test
     public void getNullWithNonexistentKey() {
         assertNull(map.get("wrong_key"));
+    }
+
+    @Test
+    public void getDefault() {
+        String key = "some_key";
+        String defaultValue = "some_value";
+        assertNull(map.get(key));
+        assertEquals(map.getOrDefault(key, defaultValue), defaultValue);
+    }
+
+
+    @Test
+    public void putIfAbsent() {
+        String key = "some_key";
+        String value = "some_value";
+        assertNull(map.get(key));
+
+        map.putIfAbsent(key, value); // positive putIfAbsent test
+        assertEquals(map.get(key), value);
+
+        String new_value = "some_new_value";
+        map.putIfAbsent(key, new_value);
+        assertEquals(map.get(key), value);
     }
 
     @Test
@@ -76,6 +99,6 @@ public class MyHashMapTest {
 
         map.clear();
         assertEquals(map.size(), 0);
-        assertEquals(map.get(key), null);
+        assertNull(map.get(key));
     }
 }

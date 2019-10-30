@@ -41,6 +41,13 @@ public class MyHashMap {
         }
     }
 
+    public void putIfAbsent(Object key, Object value) {
+        if (containsKey(key)) return;
+
+        Entry lowest = getLowestEntry(hash(key));
+        addEntry(key, value, lowest);
+    }
+
     private Entry getLowestEntry(int hash) {
         Entry entry = entries[hash];
         Entry prev_entry = null;
@@ -69,6 +76,11 @@ public class MyHashMap {
         }
 
         return null;
+    }
+
+    public Object getOrDefault(Object key, Object defaultValue) {
+        Object value = get(key);
+        return value == null ? defaultValue : value;
     }
 
     public boolean containsKey(Object key) {
