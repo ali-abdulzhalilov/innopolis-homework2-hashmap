@@ -9,6 +9,7 @@ public class MyHashMap {
     private int capacity;
     private float loadFactor;
     private Entry[] entries;
+    // TODO: write rebuild after approaching max capacity (size > capacity * loadFactor)
 
     public MyHashMap() {
         this(16);
@@ -83,6 +84,16 @@ public class MyHashMap {
             prev_node.next = entry;
 
         size++;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public void clear() {
+        for (int i = 0; i < entries.length; i++)
+            entries[i] = null;
+        size = 0;
     }
 
     @Override

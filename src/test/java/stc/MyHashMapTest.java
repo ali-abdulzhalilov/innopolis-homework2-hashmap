@@ -16,8 +16,6 @@ public class MyHashMapTest {
     //  remove(key, value)
     //contains
     //  containsValue
-    //size
-    //clear
     //values?
     //keySet?
 
@@ -49,5 +47,35 @@ public class MyHashMapTest {
         int new_value = 25;
         map.put(key, new_value);
         assertEquals(map.get(key), new_value);
+    }
+
+    @Test
+    public void getSize() {
+        assertEquals(map.size(), 0);
+
+        map.put("first", 42);
+        assertEquals(map.size(), 1);
+
+        map.put("second", 43);
+        assertEquals(map.size(), 2);
+
+        map.put("second", 44);
+        assertEquals(map.size(), 2);
+
+        //map.remove("first")
+        //assertEquals(map.size(), 1);
+    }
+
+    @Test
+    public void putAndClear() {
+        String key = "some_key";
+        int value = 42;
+        map.put(key, value);
+        assertEquals(map.size(), 1);
+        assertEquals(map.get(key), value);
+
+        map.clear();
+        assertEquals(map.size(), 0);
+        assertEquals(map.get(key), null);
     }
 }
