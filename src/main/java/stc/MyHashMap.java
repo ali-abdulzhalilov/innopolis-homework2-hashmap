@@ -31,18 +31,27 @@ public class MyHashMap {
     }
 
     public void put(Object key, Object value) {
-        Entry lowest = getLowestEntry(hash(key));
-        addEntry(key, value, lowest);
+        if (containsKey(key)) {
+            entries[hash(key)].value = value;
+        }
+        else {
+            Entry lowest = getLowestEntry(hash(key));
+            addEntry(key, value, lowest);
+        }
     }
 
     private Entry getLowestEntry(int hash) {
         Entry entry = entries[hash];
+        Entry prev_entry = null;
 
         if (entry == null) return null;
 
-        while (entry != null) entry = entry.next;
+        while (entry != null) {
+            prev_entry = entry;
+            entry = entry.next;
+        }
 
-        return entry;
+        return prev_entry;
     }
 
     public Object get(Object key) {
@@ -85,7 +94,7 @@ public class MyHashMap {
             Entry entry = entries[i];
             if (entry == null) continue;
 
-            s.append("| ");
+            s.append("|{"+i+"} ");
             while (entry != null) {
                 s.append(entry+" ");
                 entry = entry.next;
