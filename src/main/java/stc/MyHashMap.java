@@ -31,22 +31,18 @@ public class MyHashMap {
     }
 
     public void put(Object key, Object value) {
-        int hash = hash(key);
+        Entry lowest = getLowestEntry(hash(key));
+        addEntry(key, value, lowest);
+    }
+
+    private Entry getLowestEntry(int hash) {
         Entry entry = entries[hash];
 
-        if (entry == null)
-            addEntry(key, value, null);
-        else {
-            while (entry != null) {
-                if (entry.key.equals(key)) {
-                    entry.value = value;
-                    return;
-                }
-                entry = entry.next;
-            }
+        if (entry == null) return null;
 
-            addEntry(key, value, entry);
-        }
+        while (entry != null) entry = entry.next;
+
+        return entry;
     }
 
     public Object get(Object key) {
@@ -63,6 +59,10 @@ public class MyHashMap {
         }
 
         return null;
+    }
+
+    public boolean containsKey(Object key) {
+        return get(key) != null;
     }
 
     private void addEntry(Object key, Object value, Entry prev_node) {

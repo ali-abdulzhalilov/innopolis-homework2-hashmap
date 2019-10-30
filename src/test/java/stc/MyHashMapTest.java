@@ -8,16 +8,13 @@ import static org.junit.Assert.*;
 public class MyHashMapTest {
 
     //read
-    //  get
     //  getOrDefault
     //create/update
-    //  put
     //  putIfAbsent
     //delete
     //  remove(key)
     //  remove(key, value)
     //contains
-    //  containsKey
     //  containsValue
     //size
     //clear
@@ -42,11 +39,5 @@ public class MyHashMapTest {
         int value = 24;
         map.put(key, value);
         assertEquals(map.get(key), value);
-    }
-
-    @Test
-    public void shouldAnswerWithTrue()
-    {
-        assertTrue( true );
     }
 }
