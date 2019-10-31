@@ -6,7 +6,7 @@ public class App
     {
         MyHashMap map = new MyHashMap();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 15; i++) {
             map.put(i, i+1);
         }
         System.out.println(map);

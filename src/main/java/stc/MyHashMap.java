@@ -26,45 +26,68 @@ public class MyHashMap {
 
         this.entries = new Entry[capacity];
     }
+
     private int hash(Object key) {
-        int h = key.hashCode() >>> 1;
+        return hash(key, capacity);
+    }
+
+    private int hash(Object key, int capacity) {
+        int h = key.hashCode();
         return key == null ? 0 : h  % (capacity-1);
     }
 
+    // create/update
     public Object put(Object key, Object value) {
-        if (containsKey(key)) {
-            Object old_value = entries[hash(key)].value;
-            entries[hash(key)].value = value;
-            return old_value;
-        }
-        else {
-            Entry lowest = getLowestEntry(hash(key));
-            addEntry(key, value, lowest);
-            return null;
-        }
+        Object res = replace(key, value);
+
+        if (res == null)
+            addEntry(key, value);
+
+        return res;
     }
 
-    public void putIfAbsent(Object key, Object value) {
-        if (containsKey(key)) return;
+    public Object putIfAbsent(Object key, Object value) {
+        if (containsKey(key)) return null;
 
-        Entry lowest = getLowestEntry(hash(key));
-        addEntry(key, value, lowest);
+        addEntry(key, value);
+
+        return value;
     }
 
-    private Entry getLowestEntry(int hash) {
+    public Object replace(Object key, Object value) {
+        int hash = hash(key);
+
         Entry entry = entries[hash];
-        Entry prev_entry = null;
-
-        if (entry == null) return null;
-
         while (entry != null) {
-            prev_entry = entry;
+            if (entry.key.equals(key) && entry.value != null) {
+                Object old_value = entry.value;
+                entry.value = value;
+                return value;
+            }
+
             entry = entry.next;
         }
 
-        return prev_entry;
+        return null;
     }
 
+    public boolean replace(Object key, Object oldValue, Object newValue) {
+        int hash = hash(key);
+
+        Entry entry = entries[hash];
+        while (entry != null) {
+            if (entry.key.equals(key) && entry.value == oldValue) {
+                entry.value = newValue;
+                return true;
+            }
+
+            entry = entry.next;
+        }
+
+        return false;
+    }
+
+    // read
     public Object get(Object key) {
         int hash = hash(key);
         Entry entry = entries[hash];
@@ -82,6 +105,7 @@ public class MyHashMap {
     }
 
     public Object getOrDefault(Object key, Object defaultValue) {
+
         Object value = get(key);
         return value == null ? defaultValue : value;
     }
@@ -106,28 +130,13 @@ public class MyHashMap {
         return false;
     }
 
-    private void addEntry(Object key, Object value, Entry prev_node) {
-        Entry entry = new Entry(key, value);
-
-        if (prev_node == null)
-            entries[hash(key)] = entry;
-        else
-            prev_node.next = entry;
-
-        size++;
-    }
-
     public int size() {
         return size;
     }
 
-    public void clear() {
-        for (int i = 0; i < entries.length; i++)
-            entries[i] = null;
-        size = 0;
-    }
-
+    // delete
     public Object remove(Object key) {
+
         int hash = hash(key);
         Entry entry = entries[hash];
 
@@ -162,6 +171,65 @@ public class MyHashMap {
         return remove(key);
     }
 
+    public void clear() {
+        for (int i = 0; i < entries.length; i++)
+            entries[i] = null;
+        size = 0;
+    }
+
+    // utils
+    private void addEntry(Object key, Object value) {
+        if (shouldRehash())
+            rehash();
+
+        Entry entry = new Entry(key, value);
+
+        size++;
+
+        putEntryInBucket(entry, entries, hash(key));
+    }
+
+    private Entry putEntryInBucket(Entry entry, Entry[] bucketList, int index) {
+        if (entry == null) return null;
+
+        if (bucketList[index] == null) {
+          bucketList[index] = entry;
+          return null;
+        }
+
+        Entry tmp_entry = bucketList[index];
+        while (tmp_entry.next != null)
+            tmp_entry = tmp_entry.next;
+
+        tmp_entry.next = entry;
+        return tmp_entry;
+    }
+
+    private boolean shouldRehash() {
+        return size > capacity * loadFactor;
+    }
+
+    private void rehash() {
+        Entry[] rehashed_entries = new Entry[capacity*2];
+
+        Entry entry;
+        Entry new_entry;
+        for (int i = 0; i < entries.length; i++) {
+            entry = entries[i];
+
+            while (entry != null) {
+                int new_hash = hash(entry.key, capacity*2);
+                new_entry = new Entry(entry.key, entry.value);
+                putEntryInBucket(new_entry, rehashed_entries, new_hash);
+
+                entry = entry.next;
+            }
+        }
+
+        entries = rehashed_entries;
+        capacity *= 2;
+    }
+
     @Override
     public String toString() {
         StringBuffer s = new StringBuffer();
@@ -182,12 +250,6 @@ public class MyHashMap {
 
         return s.toString();
     }
-
-    //hash
-    //put
-    //  add
-    //  replace
-    //get
 }
 
 

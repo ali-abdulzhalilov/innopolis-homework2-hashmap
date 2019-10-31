@@ -7,8 +7,6 @@ import static org.junit.Assert.*;
 
 public class MyHashMapTest {
 
-    //contains
-    //  containsValue
     //values?
     //keySet?
 
