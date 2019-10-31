@@ -41,7 +41,7 @@ public class MyHashMapTest {
     }
 
     @Test
-    public void containgValue() {
+    public void containsValue() {
         String key = "some_key";
         String value = "some_value";
         assertFalse(map.containsValue(value));
