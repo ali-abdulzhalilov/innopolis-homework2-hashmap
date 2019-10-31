@@ -31,13 +31,16 @@ public class MyHashMap {
         return key == null ? 0 : h  % (capacity-1);
     }
 
-    public void put(Object key, Object value) {
+    public Object put(Object key, Object value) {
         if (containsKey(key)) {
+            Object old_value = entries[hash(key)].value;
             entries[hash(key)].value = value;
+            return old_value;
         }
         else {
             Entry lowest = getLowestEntry(hash(key));
             addEntry(key, value, lowest);
+            return null;
         }
     }
 
@@ -87,6 +90,22 @@ public class MyHashMap {
         return get(key) != null;
     }
 
+    public boolean containsValue(Object value) {
+        Entry entry;
+
+        for (int i = 0; i < entries.length; i++) {
+            entry = entries[i];
+
+            while (entry != null) {
+                if (entry.value.equals(value))
+                    return true;
+                entry = entry.next;
+            }
+        }
+
+        return false;
+    }
+
     private void addEntry(Object key, Object value, Entry prev_node) {
         Entry entry = new Entry(key, value);
 
@@ -108,6 +127,41 @@ public class MyHashMap {
         size = 0;
     }
 
+    public Object remove(Object key) {
+        int hash = hash(key);
+        Entry entry = entries[hash];
+
+        if (entry == null) return null;
+
+        Entry prev_entry = null;
+        while (entry != null) {
+            if (entry.key.equals(key)) {
+                Object value = entries[hash].value;
+
+                if (prev_entry != null)
+                    prev_entry.next = entry.next;
+                else
+                    entries[hash] = null;
+
+                size--;
+                return value;
+            }
+            prev_entry = entry;
+            entry = entry.next;
+        }
+
+        return null;
+    }
+
+    public Object remove(Object key, Object value) {
+        Object current_value = get(key);
+
+        if (current_value == null) return null;
+        if (!current_value.equals(value)) return null;
+
+        return remove(key);
+    }
+
     @Override
     public String toString() {
         StringBuffer s = new StringBuffer();
@@ -117,7 +171,7 @@ public class MyHashMap {
             Entry entry = entries[i];
             if (entry == null) continue;
 
-            s.append("|{"+i+"} ");
+            s.append(i+": ");
             while (entry != null) {
                 s.append(entry+" ");
                 entry = entry.next;

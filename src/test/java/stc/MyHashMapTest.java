@@ -7,13 +7,6 @@ import static org.junit.Assert.*;
 
 public class MyHashMapTest {
 
-    //read
-    //  getOrDefault
-    //create/update
-    //  putIfAbsent
-    //delete
-    //  remove(key)
-    //  remove(key, value)
     //contains
     //  containsValue
     //values?
@@ -39,6 +32,39 @@ public class MyHashMapTest {
         assertEquals(map.getOrDefault(key, defaultValue), defaultValue);
     }
 
+    @Test
+    public void containsKey() {
+        String key = "some_key";
+        String value = "some_value";
+        assertFalse(map.containsKey(key));
+
+        map.put(key, value);
+        assertTrue(map.containsKey(key));
+    }
+
+    @Test
+    public void containgValue() {
+        String key = "some_key";
+        String value = "some_value";
+        assertFalse(map.containsValue(value));
+
+        map.put(key, value);
+        assertEquals(map.get(key), value);
+        assertTrue(map.containsValue(value));
+
+        String other_key = "other_key";
+        map.put(other_key, value);
+        assertEquals(map.get(key), value);
+        assertTrue(map.containsValue(value));
+
+        map.remove(key, value);
+        assertNull(map.get(key));
+        assertTrue(map.containsValue(value));
+
+        map.remove(other_key, value);
+        assertNull(map.get(other_key));
+        assertFalse(map.containsValue(value));
+    }
 
     @Test
     public void putIfAbsent() {
@@ -99,6 +125,33 @@ public class MyHashMapTest {
 
         map.clear();
         assertEquals(map.size(), 0);
+        assertNull(map.get(key));
+    }
+
+    @Test
+    public void removeByKey() {
+        String key = "some_key";
+        String value = "some_value";
+        map.put(key, value);
+        assertEquals(map.get(key), value);
+
+        assertEquals(map.remove(key), value);
+        assertNull(map.get(key));
+    }
+
+    @Test
+    public void removeByKeyAndValue() {
+        String key = "some_key";
+        String value = "some_value";
+        String other_value = "other_value";
+
+        map.put(key, value);
+        assertNull(map.remove(key, other_value));
+        assertEquals(map.get(key), value);
+
+        map.put(key, other_value);
+        assertEquals(map.get(key), other_value);
+        assertEquals(map.remove(key, other_value), other_value);
         assertNull(map.get(key));
     }
 }
