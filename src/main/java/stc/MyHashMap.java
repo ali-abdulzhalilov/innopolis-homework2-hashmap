@@ -9,7 +9,6 @@ public class MyHashMap {
     private int capacity;
     private float loadFactor;
     private Entry[] entries;
-    // TODO: write rebuild after approaching max capacity (size > capacity * loadFactor)
 
     public MyHashMap() {
         this(16);
@@ -32,7 +31,7 @@ public class MyHashMap {
     }
 
     private int hash(Object key, int capacity) {
-        int h = key.hashCode();
+        int h = key.hashCode() >>> 1;
         return key == null ? 0 : h  % (capacity-1);
     }
 
